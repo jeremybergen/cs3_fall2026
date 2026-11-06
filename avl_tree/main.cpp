@@ -27,6 +27,7 @@ class Tree
 
         inOrderPrint(root->_left);
         cout << root->_data << ": bf: " << balanceFactor(root) << ", h: " << getHeight(root) << " " << endl;
+        // cout << root->_data << " ";
         inOrderPrint(root->_right);
     }
 
@@ -128,6 +129,7 @@ class Tree
         }
 
         return rebalance(root);
+        // return root;
         
         // if(root->_left == nullptr && root->_right == nullptr) root->_height = 0;
         // else if(root->_left == nullptr) root->_height = 1 + root->_right->_height;
@@ -135,6 +137,55 @@ class Tree
         // else root->_height = 1 + max(root->_left->_height, root->_right->_height);
 
         // return root;
+    }
+
+    Node* minVal(Node* root)
+    {
+        if(root->_left == nullptr) return root;
+
+        return minVal(root->_left);
+        // while(root->_left != nullptr)
+        // {
+        //     root = root->_left;
+        // }
+        // return root;
+    }
+
+    Node* removeNode(int data, Node* root)
+    {
+        if(root == nullptr) return root;
+
+        if(root->_data > data)
+        {
+            root->_left = removeNode(data, root->_left);
+        }
+        else if(root->_data < data)
+        {
+            root->_right = removeNode(data, root->_right);
+        }
+        else
+        {
+            //We have found the node
+            if(root->_left == nullptr)
+            {
+                Node* toReturn = root->_right;
+                delete root;
+                return toReturn;
+            }
+            else if(root->_right == nullptr)
+            {
+                Node* toReturn = root->_left;
+                delete root;
+                return toReturn;
+            }
+
+            Node* minNode = minVal(root->_right);
+            root->_data = minNode->_data;
+
+            root->_right = removeNode(root->_data, minNode);
+            // rebalance(root);
+        }
+        return rebalance(root);
     }
 
     public:
@@ -154,6 +205,11 @@ class Tree
         _root = insertNode(data, _root);
     }
 
+    void remove(int data)
+    {
+        _root = removeNode(data, _root);
+    }
+
     // friend ostream& operator<<(ostream os, const Tree t1)
     // {
 
@@ -167,6 +223,10 @@ int main(int argc, char* argv[])
     t1.insert(42);
     t1.insert(15);
     t1.insert(23);
+    t1.insert(100);
+    t1.inOrder();
+
+    t1.remove(15);
     t1.inOrder();
     // t1.inOrder();
     // t1.insert(100);
